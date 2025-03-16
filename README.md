@@ -28,9 +28,8 @@ This project is a "machine learning-based spam email classifier" built using "St
 ```
 Spam-Email-Classifier/
 │── app.py             # Main Streamlit application
-│── requirements.txt   # Dependencies
 │── README.md          # Project documentation
-│── data/              # Directory for sample email datasets
+│── data/              # [Directory for sample email datasets](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset)
 ```
 
 ---
@@ -43,19 +42,7 @@ git clone https://github.com/your-username/Spam-Email-Classifier.git
 cd Spam-Email-Classifier
 ```
 
-### 2. Create a Virtual Environment (Optional)
-```sh
-python -m venv venv
-source venv/bin/activate  # On macOS/Linux
-venv\Scripts\activate     # On Windows
-```
 
-### 3. Install Dependencies
-```sh
-pip install -r requirements.txt
-```
-
----
 
 ## How to Run the Application
 

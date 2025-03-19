@@ -14,19 +14,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 import os
 
-# Set a custom NLTK data path in the Streamlit Cloud environment
-nltk_data_path = "/mount/nltk_data"
-if not os.path.exists(nltk_data_path):
-    os.makedirs(nltk_data_path)
+# Set NLTK data path to the pre-downloaded directory
+nltk_data_path = os.path.join(os.path.dirname(__file__), "nltk_data")
 nltk.data.path.append(nltk_data_path)
-
-# Download NLTK data to the custom path
-try:
-    nltk.download('stopwords', download_dir=nltk_data_path)
-    nltk.download('punkt', download_dir=nltk_data_path)
-except Exception as e:
-    st.error(f"Error downloading NLTK data: {e}")
-    raise e
 
 # Verify that the NLTK data is accessible
 try:
@@ -97,4 +87,3 @@ if uploaded_file is not None:
                 st.success("This message is **NOT SPAM**.")
         else:
             st.warning("Please enter a message to check.")
-            

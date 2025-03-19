@@ -12,19 +12,37 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
+import os
 
-nltk.download('stopwords')
-nltk.download('punkt')
+# Set a custom NLTK data path in the Streamlit Cloud environment
+nltk_data_path = "/mount/nltk_data"
+if not os.path.exists(nltk_data_path):
+    os.makedirs(nltk_data_path)
+nltk.data.path.append(nltk_data_path)
 
-st.title(" Spam Email Classification")
+# Download NLTK data to the custom path
+try:
+    nltk.download('stopwords', download_dir=nltk_data_path)
+    nltk.download('punkt', download_dir=nltk_data_path)
+except Exception as e:
+    st.error(f"Error downloading NLTK data: {e}")
+    raise e
+
+# Verify that the NLTK data is accessible
+try:
+    stopwords.words('english')
+    nltk.word_tokenize("test sentence")
+except Exception as e:
+    st.error(f"Error accessing NLTK data: {e}")
+    raise e
+
+st.title("Spam Email Classification")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file, encoding='latin-1')
-
     df = df.drop(['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], axis=1)
-
     df.rename(columns={"v1": "target", "v2": "text"}, inplace=True)
 
     from sklearn.preprocessing import LabelEncoder
@@ -41,10 +59,10 @@ if uploaded_file is not None:
 
     df["transformed_text"] = df["text"].apply(transform_text)
 
-    st.write("###  Processed Data Sample:")
+    st.write("### Processed Data Sample:")
     st.write(df.head())
 
-    st.write("###  Spam vs Ham Distribution")
+    st.write("### Spam vs Ham Distribution")
     fig, ax = plt.subplots()
     plt.pie(df["target"].value_counts(), labels=["Ham", "Spam"], autopct="%0.2f")
     st.pyplot(fig)
@@ -61,7 +79,7 @@ if uploaded_file is not None:
 
     accuracy = accuracy_score(y_test, y_pred)
 
-    st.write("###  Model Performance:")
+    st.write("### Model Performance:")
     st.write(f"**MultinomialNB Accuracy:** {accuracy:.2f}")
 
     st.write("## Check if a Message is Spam")
@@ -71,14 +89,12 @@ if uploaded_file is not None:
     if st.button("Check Spam"):
         if user_input:
             transformed_input = transform_text(user_input)
-
             input_features = cv.transform([transformed_input]).toarray()
-
             prediction = mnb.predict(input_features)[0]
-
             if prediction == 1:
-                st.error(" This message is **SPAM**!")
+                st.error("This message is **SPAM**!")
             else:
-                st.success(" This message is **NOT SPAM**.")
+                st.success("This message is **NOT SPAM**.")
         else:
-            st.warning(" Please enter a message to check.")
+            st.warning("Please enter a message to check.")
+            
